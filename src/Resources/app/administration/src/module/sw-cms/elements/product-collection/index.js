@@ -3,11 +3,11 @@ import './config';
 import './preview';
 
 Shopware.Service('cmsService').registerCmsElement({
-    name: 'product-collection',
-    label: 'Product Collection',
-    component: 'sw-cms-el-product-collection',
-    configComponent: 'sw-cms-el-config-product-collection',
-    previewComponent: 'sw-cms-el-preview-product-collection',
+    name: 'fspl-product-collections',
+    label: 'Product Collections',
+    component: 'sw-cms-el-fspl-product-collections',
+    configComponent: 'sw-cms-el-config-fspl-product-collections',
+    previewComponent: 'sw-cms-el-preview-fspl-product-collections',
     defaultConfig: {
         collectionType: {
             source: 'static',
@@ -16,14 +16,6 @@ Shopware.Service('cmsService').registerCmsElement({
         limit: {
             source: 'static',
             value: 8
-        },
-        layout: {
-            source: 'static',
-            value: 'grid'
-        },
-        days: {
-            source: 'static',
-            value: 30
         }
     }
 });

@@ -1,0 +1,15 @@
+<sw-select-field
+        label="Collection type"
+        v-model="element.config.collectionType.value">
+    <option value="new_arrivals">New arrivals</option>
+    <option value="trending">Trending products</option>
+    <option value="featured">Featured products</option>
+    <option value="seasonal">Seasonal products</option>
+</sw-select-field>
+
+<sw-number-field
+        label="Product limit"
+        v-model="element.config.limit.value"
+        :min="1"
+        :max="50">
+</sw-number-field>

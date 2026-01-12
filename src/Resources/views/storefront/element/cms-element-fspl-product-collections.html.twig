@@ -1,0 +1,27 @@
+{% block element_fspl_product_collections %}
+    {% set products = element.data %}
+
+    {% if products is empty %}
+        {% return %}
+    {% endif %}
+
+    <div class="fspl-product-collections fspl-product-collections--{{ element.config.collectionType.value }}">
+        <div class="fspl-product-collections__grid">
+
+            {% for product in products %}
+                {% block element_fspl_product_collections_item %}
+                    <div class="fspl-product-collections__item">
+
+                        {% sw_include '@Storefront/storefront/component/product/card/box.html.twig' with {
+                            product: product,
+                            layout: 'standard'
+                        } %}
+
+                    </div>
+                {% endblock %}
+            {% endfor %}
+
+        </div>
+    </div>
+{% endblock %}
+
