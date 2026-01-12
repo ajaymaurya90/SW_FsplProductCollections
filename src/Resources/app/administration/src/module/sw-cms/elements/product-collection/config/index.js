@@ -8,6 +8,17 @@ Shopware.Component.register('sw-cms-el-config-fspl-product-collections', {
             type: Object,
             required: true
         }
+    },
+
+    computed: {
+        collectionTypeOptions() {
+            return [
+                { value: 'new_arrivals', label: 'New arrivals' },
+                { value: 'trending', label: 'Trending products' },
+                { value: 'featured', label: 'Featured products' },
+                { value: 'seasonal', label: 'Seasonal products' }
+            ];
+        }
     }
 });
 

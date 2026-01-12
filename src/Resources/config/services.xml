@@ -7,7 +7,7 @@
     <services>
         <service
                 id="FsplProductCollections\Content\Cms\FsplProductCollectionsCmsResolver">
-            <tag name="shopware.cms.element" />
+            <tag name="shopware.cms.data_resolver" />
         </service>
 
     </services>

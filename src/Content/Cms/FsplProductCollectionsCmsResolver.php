@@ -8,6 +8,7 @@ use Shopware\Core\Content\Cms\DataResolver\Element\AbstractCmsElementResolver;
 use Shopware\Core\Content\Cms\DataResolver\CriteriaCollection;
 use Shopware\Core\Content\Cms\DataResolver\Element\ElementDataCollection;
 use Shopware\Core\Content\Cms\DataResolver\ResolverContext\ResolverContext;
+use Shopware\Core\Content\Product\Aggregate\ProductVisibility\ProductVisibilityDefinition;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\RangeFilter;
@@ -32,6 +33,17 @@ class FsplProductCollectionsCmsResolver extends AbstractCmsElementResolver
         $criteria = new Criteria();
         $criteria->setLimit($limit);
         $criteria->addAssociation('cover');
+        //$criteria->addAssociation('visibilities');
+
+        $criteria->addFilter(new EqualsFilter('active', true));
+        $criteria->addFilter(
+            new EqualsFilter(
+                'visibilities.visibility',
+                ProductVisibilityDefinition::VISIBILITY_ALL
+            )
+        );
+        $criteria->addAssociation('visibilities');
+        $criteria->addFilter(new EqualsFilter('visibilities.visibility', 30));
 
         switch ($collectionType) {
 
@@ -74,6 +86,7 @@ class FsplProductCollectionsCmsResolver extends AbstractCmsElementResolver
                 break;
         }
         $criteriaCollection = new CriteriaCollection();
+        //$key = 'products_' . $slot->getUniqueIdentifier();
         $criteriaCollection->add(
             'products_' . $slot->getUniqueIdentifier(),
             'product',
@@ -89,8 +102,12 @@ class FsplProductCollectionsCmsResolver extends AbstractCmsElementResolver
         ElementDataCollection $dataCollection
     ): void {
         //dump('enrich called');
-        $slot->setData(
+        /*$slot->setData(
             $dataCollection->get('products_' . $slot->getUniqueIdentifier())
-        );
+        );*/
+        $data = $dataCollection->get('products_' . $slot->getUniqueIdentifier());
+        //dump($data);
+        $slot->setData($data);
+
     }
 }
