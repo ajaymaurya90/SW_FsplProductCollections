@@ -2,6 +2,7 @@
 
 namespace FsplProductCollections\Content\Cms;
 
+use DateTime;
 use FsplProductCollections\Content\Collection\ProductCollectionTypes;
 use Shopware\Core\Content\Cms\Aggregate\CmsSlot\CmsSlotEntity;
 use Shopware\Core\Content\Cms\DataResolver\Element\AbstractCmsElementResolver;
@@ -9,6 +10,7 @@ use Shopware\Core\Content\Cms\DataResolver\CriteriaCollection;
 use Shopware\Core\Content\Cms\DataResolver\Element\ElementDataCollection;
 use Shopware\Core\Content\Cms\DataResolver\ResolverContext\ResolverContext;
 use Shopware\Core\Content\Product\Aggregate\ProductVisibility\ProductVisibilityDefinition;
+use Shopware\Core\Content\Product\ProductDefinition;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\RangeFilter;
@@ -26,15 +28,17 @@ class FsplProductCollectionsCmsResolver extends AbstractCmsElementResolver
         CmsSlotEntity $slot,
         ResolverContext $resolverContext
     ): ?CriteriaCollection {
+        /**
+         * Getting Collection type and limit set by our element through administration
+         */
         $config = $slot->getConfig();
-        $collectionType   = $config['collectionType']['value'] ?? ProductCollectionTypes::NEW_ARRIVALS;
-        $limit = $config['limit']['value'] ?? 8;
+        $collectionType = $config['collectionType']['value']?? ProductCollectionTypes::NEW_ARRIVALS;
+        $limit = (int)$config['limit']['value']?? 8;
 
         $criteria = new Criteria();
         $criteria->setLimit($limit);
-        $criteria->addAssociation('cover');
-        //$criteria->addAssociation('visibilities');
 
+        // 🔴 REQUIRED for storefront visibility
         $criteria->addFilter(new EqualsFilter('active', true));
         $criteria->addFilter(
             new EqualsFilter(
@@ -43,7 +47,6 @@ class FsplProductCollectionsCmsResolver extends AbstractCmsElementResolver
             )
         );
         $criteria->addAssociation('visibilities');
-        $criteria->addFilter(new EqualsFilter('visibilities.visibility', 30));
 
         switch ($collectionType) {
 
@@ -80,16 +83,17 @@ class FsplProductCollectionsCmsResolver extends AbstractCmsElementResolver
                  */
                 $criteria->addFilter(
                     new RangeFilter('createdAt', [
-                        RangeFilter::GTE => (new \DateTime('-3 months'))->format(DATE_ATOM)
+                        RangeFilter::GTE => (new DateTime('-3 months'))->format(DATE_ATOM)
                     ])
                 );
                 break;
         }
+
+
         $criteriaCollection = new CriteriaCollection();
-        //$key = 'products_' . $slot->getUniqueIdentifier();
         $criteriaCollection->add(
             'products_' . $slot->getUniqueIdentifier(),
-            'product',
+            ProductDefinition::class,
             $criteria
         );
 
@@ -99,14 +103,9 @@ class FsplProductCollectionsCmsResolver extends AbstractCmsElementResolver
     public function enrich(
         CmsSlotEntity $slot,
         ResolverContext $resolverContext,
-        ElementDataCollection $dataCollection
+        ElementDataCollection $result
     ): void {
-        //dump('enrich called');
-        /*$slot->setData(
-            $dataCollection->get('products_' . $slot->getUniqueIdentifier())
-        );*/
-        $data = $dataCollection->get('products_' . $slot->getUniqueIdentifier());
-        //dump($data);
+        $data = $result->get('products_' . $slot->getUniqueIdentifier());
         $slot->setData($data);
 
     }
