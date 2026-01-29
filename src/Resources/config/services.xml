@@ -5,9 +5,32 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-        <service
-                id="FsplProductCollections\Content\Cms\FsplProductCollectionsCmsResolver">
-            <tag name="shopware.cms.data_resolver" />
+        <!-- CMS ELEMENT RESOLVER                      -->
+        <service id="Fspl\ProductCollections\Content\Cms\FsplProductCollectionsCmsResolver">
+        <argument type="service" id="Fspl\ProductCollections\Content\Collection\ProductCollectionRegistry"/>
+        <tag name="shopware.cms.data_resolver" />
+    </service>
+
+    <!-- COLLECTION BUILDER                        -->
+        <service id="Fspl\ProductCollections\Content\Collection\ProductCollectionRegistry">
+            <argument type="tagged_iterator" tag="fspl.product_collection"/>
+        </service>
+
+        <!-- COLLECTION STRATEGIES                     -->
+        <service id="Fspl\ProductCollections\Content\Collection\NewArrivalsCollection">
+            <tag name="fspl.product_collection" />
+        </service>
+
+        <service id="Fspl\ProductCollections\Content\Collection\FeaturedCollection">
+            <tag name="fspl.product_collection" />
+        </service>
+
+        <service id="Fspl\ProductCollections\Content\Collection\SeasonalCollection">
+            <tag name="fspl.product_collection" />
+        </service>
+
+        <service id="Fspl\ProductCollections\Content\Collection\TrendingCollection">
+            <tag name="fspl.product_collection" />
         </service>
 
     </services>

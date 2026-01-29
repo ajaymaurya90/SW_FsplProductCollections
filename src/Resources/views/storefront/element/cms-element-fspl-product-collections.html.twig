@@ -1,33 +1,67 @@
 {% block element_fspl_product_collections %}
-    <div style="border: 2px solid red; padding: 20px;">
+    {% set products = element.data.products ?? element.data %}
+    {% set collectionType = element.config.collectionType.value %}
 
+    {{ dump(element) }}
 
-    {% set products = element.data %}
+    <section class="fspl-product-collections">
 
+        {# ============================= #}
+        {# Heading #}
+        {# ============================= #}
+        {% block element_fspl_product_collections_header %}
+            <header class="fspl-product-collections__header">
+                <h2 class="fspl-product-collections__title">
+                    {{ ("fspl.productCollections." ~ collectionType)|trans }}
+                </h2>
+            </header>
+        {% endblock %}
 
+        {# ============================= #}
+        {# Empty state #}
+        {# ============================= #}
+        {% if products is empty %}
+            {% block element_fspl_product_collections_empty %}
+                <p class="fspl-product-collections__empty">
+                    {{ "fspl.productCollections.empty"|trans }}
+                </p>
+            {% endblock %}
+        {% else %}
 
-    {% if products is empty %}
-        <p>No products found</p>
-    {% endif %}
+            {% block element_fspl_product_collection_sw_slider %}
+                {% set sliderConfig = {
+                    navigation: true,
+                    pagination: false,
+                    autoplay: false,
+                    loop: false,
+                    gutter: 30,
+                    breakpoints: {
+                        0: { slidesPerView: 1.2 },
+                        576: { slidesPerView: 2.2 },
+                        768: { slidesPerView: 3 },
+                        992: { slidesPerView: 4 }
+                    }
+                } %}
 
-    <div class="fspl-product-collections fspl-product-collections--{{ element.config.collectionType.value }}">
-        <div class="fspl-product-collections__grid">
+                <div class="cms-element-product-slider"
+                     data-product-slider="true"
+                     data-product-slider-options='{{ sliderConfig|json_encode }}'>
 
-            {% for product in products %}
-                {% block element_fspl_product_collections_item %}
-                    <div class="fspl-product-collections__item">
-
-                        {% sw_include '@Storefront/storefront/component/product/card/box.html.twig' with {
-                            product: product,
-                            layout: 'standard'
-                        } %}
-
+                    <div class="product-slider-container">
+                        <h2>I am here</h2>
+                        <div class="swiper-wrapper">
+                        {% for product in products %}
+                            <div class="product-slider-item swiper-slide">
+                                {% sw_include '@Storefront/storefront/component/product/card/box.html.twig' with {
+                                    product: product,
+                                    layout: 'standard'
+                                } %}
+                            </div>
+                        {% endfor %}
+                        </div>
                     </div>
-                {% endblock %}
-            {% endfor %}
-
-        </div>
-    </div>
-    </div>
+                </div>
+            {% endblock %}
+        {% endif %}
+    </section>
 {% endblock %}
-

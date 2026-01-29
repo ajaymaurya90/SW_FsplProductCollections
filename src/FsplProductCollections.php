@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace FsplProductCollections;
+namespace Fspl\ProductCollections;
 
 use Shopware\Core\Framework\Plugin;
 use Shopware\Core\Framework\Plugin\Context\ActivateContext;

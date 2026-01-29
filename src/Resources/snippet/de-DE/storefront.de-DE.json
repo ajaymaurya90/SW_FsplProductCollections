@@ -1,0 +1,11 @@
+{
+  "fspl": {
+    "productCollections": {
+      "new_arrivals": "New Arrivals",
+      "trending": "Trending Products",
+      "featured": "Featured Products",
+      "seasonal": "Seasonal Picks",
+      "empty": "Keine Produkte gefunden"
+    }
+  }
+}

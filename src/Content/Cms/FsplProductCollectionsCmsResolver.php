@@ -1,9 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace FsplProductCollections\Content\Cms;
+namespace Fspl\ProductCollections\Content\Cms;
 
 use DateTime;
-use FsplProductCollections\Content\Collection\ProductCollectionTypes;
+use Fspl\ProductCollections\Content\Collection\ProductCollectionRegistry;
+use Fspl\ProductCollections\Content\Collection\ProductCollectionTypes;
 use Shopware\Core\Content\Cms\Aggregate\CmsSlot\CmsSlotEntity;
 use Shopware\Core\Content\Cms\DataResolver\Element\AbstractCmsElementResolver;
 use Shopware\Core\Content\Cms\DataResolver\CriteriaCollection;
@@ -19,6 +20,14 @@ use Shopware\Core\Framework\DataAbstractionLayer\Search\Sorting\FieldSorting;
 
 class FsplProductCollectionsCmsResolver extends AbstractCmsElementResolver
 {
+    /**
+     * Registry that provides collection strategies
+     */
+    private ProductCollectionRegistry $collectionRegistry;
+    public function __construct(ProductCollectionRegistry $collectionRegistry)
+    {
+        $this->collectionRegistry = $collectionRegistry;
+    }
     public function getType(): string
     {
         return 'fspl-product-collections';
@@ -35,18 +44,27 @@ class FsplProductCollectionsCmsResolver extends AbstractCmsElementResolver
         $collectionType = $config['collectionType']['value']?? ProductCollectionTypes::NEW_ARRIVALS;
         $limit = (int)$config['limit']['value']?? 8;
 
+        // Get correct collection strategy
+        $collection = $this->collectionRegistry->get($collectionType);
+
+        // Let collection build Criteria
+        $criteria = $collection->buildCriteria($limit);
+
+        /*
         $criteria = new Criteria();
         $criteria->setLimit($limit);
 
         // 🔴 REQUIRED for storefront visibility
         $criteria->addFilter(new EqualsFilter('active', true));
+
         $criteria->addFilter(
             new EqualsFilter(
-                'visibilities.visibility',
-                ProductVisibilityDefinition::VISIBILITY_ALL
+                'visibilities.salesChannelId',
+                $resolverContext->getSalesChannelContext()->getSalesChannelId()
             )
         );
         $criteria->addAssociation('visibilities');
+        $criteria->addAssociation('cover');
 
         switch ($collectionType) {
 
@@ -57,30 +75,18 @@ class FsplProductCollectionsCmsResolver extends AbstractCmsElementResolver
                 break;
 
             case ProductCollectionTypes::TRENDING:
-                /**
-                 * Simple trending logic for now.
-                 * Can be replaced later with sales-based logic.
-                 */
                 $criteria->addSorting(
                     new FieldSorting('ratingAverage', FieldSorting::DESCENDING)
                 );
                 break;
 
             case ProductCollectionTypes::FEATURED:
-                /**
-                 * Requires a boolean custom field on product:
-                 * customFields.fspl_featured = true
-                 */
                 $criteria->addFilter(
                     new EqualsFilter('customFields.fspl_featured', true)
                 );
                 break;
 
             case ProductCollectionTypes::SEASONAL:
-                /**
-                 * Products created within last 3 months.
-                 * Can be extended to date ranges or season flags.
-                 */
                 $criteria->addFilter(
                     new RangeFilter('createdAt', [
                         RangeFilter::GTE => (new DateTime('-3 months'))->format(DATE_ATOM)
@@ -88,8 +94,7 @@ class FsplProductCollectionsCmsResolver extends AbstractCmsElementResolver
                 );
                 break;
         }
-
-
+        */
         $criteriaCollection = new CriteriaCollection();
         $criteriaCollection->add(
             'products_' . $slot->getUniqueIdentifier(),

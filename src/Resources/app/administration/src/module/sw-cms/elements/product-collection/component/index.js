@@ -14,10 +14,3 @@ Shopware.Component.register('sw-cms-el-fspl-product-collections', {
         this.initElementConfig('fspl-product-collections');
     }
 });
-
-/*import template from './component.vue';
-
-Shopware.Component.register('sw-cms-el-product-collection', {
-    template
-}); */
-

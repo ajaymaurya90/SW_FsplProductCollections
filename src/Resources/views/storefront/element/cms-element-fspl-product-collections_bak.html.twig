@@ -1,0 +1,78 @@
+{% block element_fspl_product_collections %}
+    {% set products = element.data %}
+    {% set collectionType = element.config.collectionType.value %}
+
+    <section
+            class="fspl-product-collections"
+            data-fspl-product-collections>
+
+        {# ============================= #}
+        {# Heading #}
+        {# ============================= #}
+        {% block element_fspl_product_collections_header %}
+            <header class="fspl-product-collections__header">
+                <h2 class="fspl-product-collections__title">
+                    {{ ("fspl.productCollections." ~ collectionType)|trans }}
+                </h2>
+
+                <div class="fspl-product-collections__controls">
+                    <button class="fspl-product-collections__nav fspl-product-collections__nav--prev"
+                            type="button"
+                            aria-label="Previous">
+                        ‹
+                    </button>
+                    <button class="fspl-product-collections__nav fspl-product-collections__nav--next"
+                            type="button"
+                            aria-label="Next">
+                        ›
+                    </button>
+                </div>
+            </header>
+        {% endblock %}
+
+        {# ============================= #}
+        {# Empty state #}
+        {# ============================= #}
+        {% if products is empty %}
+            {% block element_fspl_product_collections_empty %}
+                <p class="fspl-product-collections__empty">
+                    {{ "fspl.productCollections.empty"|trans }}
+                </p>
+            {% endblock %}
+        {% else %}
+
+            {# ============================= #}
+            {# Horizontal Scroll Grid #}
+            {# ============================= #}
+
+            {% block element_fspl_product_collections_slider %}
+                <div class="fspl-product-collections__slider">
+
+                    <div class="fspl-product-collections__track">
+                        {% for product in products %}
+                            {% block element_fspl_product_collections_item %}
+                                <div class="fspl-product-collections__item">
+
+                                    {% sw_include
+                                        '@Storefront/storefront/component/product/card/box.html.twig'
+                                        with {
+                                        product: product,
+                                        layout: 'standard'
+                                    }
+                                    %}
+
+                                </div>
+                            {% endblock %}
+                        {% endfor %}
+                    </div>
+
+                </div>
+            {% endblock %}
+
+
+        {% endif %}
+    </section>
+{% endblock %}
+
+
+
